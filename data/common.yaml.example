@@ -1,0 +1,119 @@
+---
+lookup_options:
+  ibvs::infoblox.wapi_password:
+    convert_to: 'Sensitive'
+  ibvs::vsphere.password:
+    convert_to: 'Sensitive'   
+
+ibvs::infoblox:
+  wapi_host:  <INFOBLOX API HOST>
+  wapi_version: v2.11
+  user:       <INFOBLOX API USER>
+  password:   <INFOBLOX API PASSWORD> # NOTE: Should be encrypted with eYaml in production
+
+ibvs::vsphere:
+  host: <VMWARE VSPHERE HOST>
+  user: <VMWARE VSPHERE USER>
+  password: <VMWARE VSPHERE PASSWORD> # NOTE: Should be encrypted with eYaml in production
+  port: 443
+  insecure: false
+  ssl: true
+
+ibvs::templates:
+  RHEL87:
+    path: Templates/RHEL87
+    firstboot_script: |
+      #!/bin/bash
+      
+      # Check completion flag to see if we've already run 
+      TEST=`vmtoolsd --cmd "info-get guestinfo.puppet.firstruncomplete"`
+      if [[ "${TEST}" != "true" ]]; then
+
+        # Hostname Configuration
+        hostnamectl set-hostname <%= $hostname %>
+
+        # Network IP Settings
+        nmcli connection modify <%= $vm['interface'] %> IPv4.address <%= $ipaddress %>
+        nmcli connection modify <%= $vm['interface'] %> IPv4.gateway <%= $vm['gateway'] %>
+        nmcli connection modify <%= $vm['interface'] %> IPv4.dns "<%= $vm['dns'] %>"
+        nmcli connection modify <%= $vm['interface'] %> IPv4.method manual
+        nmcli connection down <%= $vm['interface'] %> && nmcli connection up <%= $vm['interface'] %>
+
+        # Puppet Setup
+        curl -k https://<%= $puppet['server'] %>:8140/packages/current/install.bash | sudo bash -s \
+          agent:certname=<%= $hostname %> \
+          custom_attributes:challengePassword=<%= $vm['puppet_psk'] %> \
+          extension_requests:pp_role=<%= $vm['puppet_role'] %>
+
+        # Set completion flag so we don't run again
+        vmtoolsd --cmd "info-set guestinfo.puppet.firstruncomplete true"
+      fi
+  RHEL90:
+    path: Templates/RHEL90
+    firstboot_script: |
+      #!/bin/bash
+
+      # Check completion flag to see if we've already run 
+      TEST=`vmtoolsd --cmd "info-get guestinfo.puppet.firstruncomplete"`
+      if [[ "${TEST}" != "true" ]]; then
+
+        # Hostname Configuration
+        hostnamectl set-hostname <%= $hostname %>
+
+        # Network IP Settings
+        nmcli connection modify <%= $vm['interface'] %> IPv4.address <%= $ipaddress %>
+        nmcli connection modify <%= $vm['interface'] %> IPv4.gateway <%= $vm['gateway'] %>
+        nmcli connection modify <%= $vm['interface'] %> IPv4.dns "<%= join($vm['dns'], ' ') %>"
+        nmcli connection modify <%= $vm['interface'] %> IPv4.method manual
+        nmcli connection down <%= $vm['interface'] %> && nmcli connection up <%= $vm['interface'] %>
+
+        # Puppet Setup
+        curl -k https://<%= $puppet['server'] %>:8140/packages/current/install.bash | sudo bash -s \
+          agent:certname=<%= $hostname %> \
+          custom_attributes:challengePassword=<%= $vm['puppet_psk'] %> \
+          extension_requests:pp_role=<%= $vm['puppet_role'] %>
+
+        # Set completion flag so we don't run again
+        vmtoolsd --cmd "info-set guestinfo.puppet.firstruncomplete true"
+      fi
+
+ibvs::puppet:
+  server: <PUPPET SERVER FQDN>
+
+ibvs::vms:
+  test1.example.com:
+    ensure: present
+    datacenter: Datacenter1
+    template: RHEL90
+    interface: ens192
+    network: '10.0.0.0/24'
+    gateway: 10.0.0.254
+    dns: 
+      - 10.0.0.1
+      - 10.0.0.2
+    puppet_psk: PSK_UNSET
+    puppet_role: role::generic
+  test2.example.com:
+    ensure: present
+    datacenter: Datacenter1
+    template: RHEL90
+    interface: ens192
+    network: '10.0.0.0/24'
+    gateway: 10.0.0.254
+    dns: 
+      - 10.0.0.1
+      - 10.0.0.2
+    puppet_psk: PSK_UNSET
+    puppet_role: role::generic
+  test3.example.com:
+    ensure: absent
+    datacenter: Datacenter1
+  test4.example.com:
+    ensure: absent
+    datacenter: Datacenter1
+  test5.example.com:
+    ensure: absent
+    datacenter: Datacenter1
+  test6.example.com:
+    ensure: absent
+    datacenter: Datacenter1
