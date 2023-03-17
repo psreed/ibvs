@@ -68,7 +68,10 @@ vi ibvs/data/common.yaml
 following options (debug and noop are optional) in order to active the module.
 ```
 cd ..
-sudo /opt/puppetlabs/puppet/bin/puppet apply --modulepath=./modules --hiera_config ./modules/ibvs/hiera.yaml -e 'include ibvs' --debug --noop
+sudo /opt/puppetlabs/puppet/bin/puppet apply \
+  --modulepath=./modules \
+  --hiera_config ./modules/ibvs/hiera.yaml \
+  -e 'include ibvs' --debug --noop
 ```
 Note: sudo is required to manage and read the vsphere user configuration 
 managed by ibvs::vsphere_config. With this method, environment variable are 
