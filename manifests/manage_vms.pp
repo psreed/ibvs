@@ -65,11 +65,12 @@ class ibvs::manage_vms {
       if $newip != '' {
         notify { "Creating VM (${hostname})": }
         vsphere_vm { "/${vm['datacenter']}/vm/${hostname}":
-          ensure       => present,
-          cpus         => 2,
-          memory       => 512,
-          source       => "/${vm['datacenter']}/vm/${ibvs::templates[$vm['template']]['path']}",
-          extra_config => {
+          ensure        => present,
+          cpus          => 2,
+          memory        => 512,
+          resource_pool => $vm['resource_pool'],
+          source        => "/${vm['datacenter']}/vm/${ibvs::templates[$vm['template']]['path']}",
+          extra_config  => {
             'guestinfo.infoblox.ipaddress' => $newip,
             'guestinfo.infoblox.hostname'  => $hostname,
             'guestinfo.puppet.firstrun'    => inline_epp($epp_template, {

@@ -85,6 +85,7 @@ ibvs::vms:
     ensure: present
     datacenter: Datacenter1
     template: RHEL90
+    resource_pool: Cluster01
     interface: ens192
     network: '10.0.0.0/24'
     gateway: 10.0.0.254
@@ -97,6 +98,7 @@ ibvs::vms:
     ensure: present
     datacenter: Datacenter1
     template: RHEL90
+    resource_pool: Cluster01
     interface: ens192
     network: '10.0.0.0/24'
     gateway: 10.0.0.254
