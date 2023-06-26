@@ -9,6 +9,7 @@ class ibvs::manage_vms {
     'user' => $ibvs::infoblox['user'],
     'password'=> Sensitive($ibvs::infoblox['password'].unwrap),
     'wapi_url' => "https://${ibvs::infoblox['wapi_host']}/wapi/${ibvs::infoblox['wapi_version']}",
+    'view' => $ibvs::infoblox['view'],
     'noop' => $facts['clientnoop'],
   }
 
@@ -60,8 +61,8 @@ class ibvs::manage_vms {
       }
       $epp_template=$ibvs::templates[$vm['template']]['firstboot_script']
 
-      notify { "Reserving IP from Infoblox for '${hostname}' on network: '${vm['network']}' ": }
-      $newip=ibvs::infoblox::add_host_with_next_ip($hostname, $vm['network'], $infoblox_settings)
+      notify { "Reserving IP from Infoblox for '${hostname}' on network: '${vm['network']}' with view: '${$vm['infoblox_view']}'": }
+      $newip=ibvs::infoblox::add_host_with_next_ip($hostname, $vm['network'], $vm['infoblox_view'], $infoblox_settings)
       if $newip != '' {
         notify { "Creating VM (${hostname})": }
         vsphere_vm { "/${vm['datacenter']}/vm/${hostname}":
