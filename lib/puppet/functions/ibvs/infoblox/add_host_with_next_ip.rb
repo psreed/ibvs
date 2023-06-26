@@ -17,7 +17,8 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
       'ipv4addrs' => [{
         'ipv4addr' => 'func:nextavailableip:' + network + ',' + view
       }],
-      'network_view' => view
+      'network_view' => view,
+      'view' => view,
     }
 
     cmd = []
@@ -31,7 +32,7 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
     cmdstring = cmd.join(' ')
     res = JSON.parse( %x[ #{cmdstring} ])
     if res['Error']
-      fail("Error Follows:\n\n   **** Infoblox Error: #{res['text']}\n   **** Infoblox Error: #{res['code']}\n\n")
+      fail("Error Follows:\n\n   **** Infoblox Error: #{res['text']}\n   **** Infoblox Error: #{res['code']}\n\nCommand String: #{cmdstring}")
     end
     if res['result']
       return res['result']['ipv4addrs'][0]['ipv4addr']
