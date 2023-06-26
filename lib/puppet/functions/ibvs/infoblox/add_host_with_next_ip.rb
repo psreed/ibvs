@@ -15,9 +15,9 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
     params = {
       'name' => hostname, 
       'ipv4addrs' => [{
-        'ipv4addr' => 'func:nextavailableip:' + network + ',default'
+        'ipv4addr' => 'func:nextavailableip:' + network + ',' + view
       }],
-      'view' => view
+      'network_view' => view
     }
 
     cmd = []
