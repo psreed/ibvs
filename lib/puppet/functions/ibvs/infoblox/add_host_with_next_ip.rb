@@ -5,20 +5,21 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
   dispatch :func do
     param 'String', :hostname
     param 'String', :network
-    param 'String', :view
+    param 'String', :dns_view
+    param 'String', :network_view
     param 'Hash', :infoblox
     return_type 'String'
   end
   
-  def func(hostname, network, view, infoblox)
+  def func(hostname, network, dns_view, network_view, infoblox)
     url = infoblox['wapi_url'] + "/record:host?_return_fields%2B=name,ipv4addrs&_return_as_object=1"
     params = {
       'name' => hostname, 
       'ipv4addrs' => [{
-        'ipv4addr' => 'func:nextavailableip:' + network + ',' + view
+        'ipv4addr' => 'func:nextavailableip:' + network + ',' + network_view
       }],
-      'network_view' => view,
-      'view' => view,
+      'network_view' => network_view,
+      'view' => dns_view,
     }
 
     cmd = []

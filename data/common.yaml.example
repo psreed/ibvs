@@ -88,7 +88,8 @@ ibvs::vms:
     resource_pool: Cluster01
     interface: ens192
     network: '10.0.0.0/24'
-    infoblox_view: Default
+    infoblox_network_view: Default
+    infoblox_dns_view: Default
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1
@@ -102,7 +103,8 @@ ibvs::vms:
     resource_pool: Cluster01
     interface: ens192
     network: '10.0.0.0/24'
-    infoblox_view: Default
+    infoblox_network_view: Default
+    infoblox_dns_view: Default
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1

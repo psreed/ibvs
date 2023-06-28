@@ -61,8 +61,13 @@ class ibvs::manage_vms {
       }
       $epp_template=$ibvs::templates[$vm['template']]['firstboot_script']
 
-      notify { "Reserving IP from Infoblox for '${hostname}' on network: '${vm['network']}' with view: '${$vm['infoblox_view']}'": }
-      $newip=ibvs::infoblox::add_host_with_next_ip($hostname, $vm['network'], $vm['infoblox_view'], $infoblox_settings)
+      notify { "Reserving IP from Infoblox for '${hostname}' on network: '${vm['network']}' with network_view: '${$vm['infoblox_network_view']}' and dns_view: '${$vm['infoblox_dns_view']}'": } #lint:ignore:140chars
+      $newip=ibvs::infoblox::add_host_with_next_ip(
+        $hostname, $vm['network'],
+        $vm['infoblox_dns_view'],
+        $vm['infoblox_network_view'],
+        $infoblox_settings
+      )
       if $newip != '' {
         notify { "Creating VM (${hostname})": }
         vsphere_vm { "/${vm['datacenter']}/vm/${hostname}":
