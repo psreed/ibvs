@@ -7,11 +7,12 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
     param 'String', :network
     param 'String', :dns_view
     param 'String', :network_view
+    param 'String', :auth_zone
     param 'Hash', :infoblox
     return_type 'String'
   end
   
-  def func(hostname, network, dns_view, network_view, infoblox)
+  def func(hostname, network, dns_view, network_view, auth_zone, infoblox)
     url = infoblox['wapi_url'] + "/record:host?_return_fields%2B=name,ipv4addrs&_return_as_object=1"
     params = {
       'name' => hostname, 
@@ -20,6 +21,7 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
       }],
       'network_view' => network_view,
       'view' => dns_view,
+      'auth_zone' => auth_zone,
     }
 
     cmd = []

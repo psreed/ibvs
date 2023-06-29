@@ -90,6 +90,7 @@ ibvs::vms:
     network: '10.0.0.0/24'
     infoblox_network_view: Default
     infoblox_dns_view: Default
+    infoblox_zone_auth: 10.0.0.0/8
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1
@@ -105,6 +106,7 @@ ibvs::vms:
     network: '10.0.0.0/24'
     infoblox_network_view: Default
     infoblox_dns_view: Default
+    infoblox_zone_auth: 10.0.0.0/8
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1
