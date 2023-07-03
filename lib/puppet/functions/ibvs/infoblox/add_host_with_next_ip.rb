@@ -21,7 +21,7 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
       }],
       'network_view' => network_view,
       'view' => dns_view,
-      'zone_auth' => zone_auth,
+#      'zone_auth' => zone_auth,
     }
 
     cmd = []
