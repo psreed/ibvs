@@ -8,6 +8,8 @@ Puppet::Functions.create_function(:'ibvs::infoblox::get_host_info') do
   end
   
   def func(host, infoblox)
+    Puppet.debug("Starting Infoblox Lookup via API (get_host_info) for Host: '#{host}'")
+
     url = infoblox['wapi_url'] + "/record:host?name=#{host}&_return_as_object=1"
     cmd = []
     cmd << "/opt/puppetlabs/puppet/bin/curl -s --insecure"
@@ -18,7 +20,7 @@ Puppet::Functions.create_function(:'ibvs::infoblox::get_host_info') do
 
     cmdstring = cmd.join(' ')
     result = %x[ #{cmdstring} ]
-    Puppet.debug("Infoblox Result: '#{result}'")
+    Puppet.debug("Infoblox Result (get_host_info): '#{result}'")
 
     if result == ""
       return { 'code' => '1', 'data' => "No info returned for #{host}\n#{cmdstring}" }
