@@ -15,7 +15,7 @@ class ibvs::manage_vms {
 
   $ibvs::vms.each | $hostname, $vm | {
     $host_info=ibvs::infoblox::get_host_info($hostname,$infoblox_settings)
-    notify { "host_info return code: ${host_info['code']}": }
+    notify { "host_info return code: '${host_info['code']}'": }
 
     # Set Action Conditions for VM:
     # Case 1: Exists and should (do nothing)
