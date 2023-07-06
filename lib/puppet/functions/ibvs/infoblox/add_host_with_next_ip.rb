@@ -28,7 +28,12 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
     cmd << "/opt/puppetlabs/puppet/bin/curl -s --insecure"
     cmd << "-H 'content-type: application/json'"
     cmd << "-X POST"
-    cmd << "-u #{infoblox['user']}:#{infoblox['password'].unwrap}"
+    begin
+      cmd << "-u #{infoblox['user']}:#{infoblox['password'].unwrap}"
+      Puppet.debug('ibvs::infoblox::add_host_with_next_ip: Note: Fellback to unwrapped password used')
+    rescue
+      cmd << "-u #{infoblox['user']}:#{infoblox['password']}"
+    end
     cmd << "-d '#{params.to_json}'"
     cmd << "\"#{url}\""
 
