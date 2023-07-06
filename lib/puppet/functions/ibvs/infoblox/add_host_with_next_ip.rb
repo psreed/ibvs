@@ -7,12 +7,13 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
     param 'String', :network
     param 'String', :dns_view
     param 'String', :network_view
-    param 'String', :zone_auth
     param 'Hash', :infoblox
     return_type 'String'
   end
   
-  def func(hostname, network, dns_view, network_view, zone_auth, infoblox)
+  def func(hostname, network, dns_view, network_view, infoblox)
+    fn='ibvs::infoblox::add_host_with_next_ip'
+    Puppet.debug("#{fn}: Function Started")
     url = infoblox['wapi_url'] + "/record:host?_return_fields%2B=name,ipv4addrs&_return_as_object=1"
     params = {
       'name' => hostname, 
@@ -21,7 +22,6 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
       }],
       'network_view' => network_view,
       'view' => dns_view,
-#      'zone_auth' => zone_auth,
     }
 
     cmd = []
@@ -30,8 +30,8 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
     cmd << "-X POST"
     begin
       cmd << "-u #{infoblox['user']}:#{infoblox['password'].unwrap}"
-      Puppet.debug('ibvs::infoblox::add_host_with_next_ip: Note: Fellback to unwrapped password used')
     rescue
+      Puppet.debug("#{fn}: Note: Fellback to unwrapped password")
       cmd << "-u #{infoblox['user']}:#{infoblox['password']}"
     end
     cmd << "-d '#{params.to_json}'"
@@ -40,12 +40,12 @@ Puppet::Functions.create_function(:'ibvs::infoblox::add_host_with_next_ip') do
     cmdstring = cmd.join(' ')
     res = JSON.parse( %x[ #{cmdstring} ])
     if res['Error']
-      fail("Error Follows:\n\n   **** Infoblox Error: #{res['text']}\n   **** Infoblox Error: #{res['code']}\n\nCommand String: #{cmdstring}")
+      fail("#{fn}: Error Follows:\n\n   **** Infoblox Error: #{res['text']}\n   **** Infoblox Error: #{res['code']}\n\nCommand String: #{cmdstring}")
     end
     if res['result']
       return res['result']['ipv4addrs'][0]['ipv4addr']
     end
-    fail("Puppet could not get curl result from Infoblox")
+    fail("#{fn}: Puppet could not get curl result from Infoblox")
   end
 end
 

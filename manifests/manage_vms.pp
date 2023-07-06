@@ -67,7 +67,6 @@ class ibvs::manage_vms {
         $hostname, $vm['network'],
         $vm['infoblox_dns_view'],
         $vm['infoblox_network_view'],
-        $vm['infoblox_zone_auth'],
         $infoblox_settings
       )
       if $newip != '' {
