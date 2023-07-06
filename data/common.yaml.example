@@ -88,6 +88,7 @@ ibvs::vms:
     resource_pool: Cluster01
     interface: ens192
     network: '10.0.0.0/24'
+    network_label: 'VM Network'
     infoblox_network_view: Default
     infoblox_dns_view: Default
     infoblox_zone_auth: 10.0.0.0/8
@@ -104,6 +105,7 @@ ibvs::vms:
     resource_pool: Cluster01
     interface: ens192
     network: '10.0.0.0/24'
+    network_label: 'VM Network'
     infoblox_network_view: Default
     infoblox_dns_view: Default
     infoblox_zone_auth: 10.0.0.0/8
