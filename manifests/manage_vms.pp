@@ -90,6 +90,7 @@ class ibvs::manage_vms {
           vm_name       => $hostname,
           network_label => $vm['network_label'],
           nic_id        => 0,
+          require       => Vsphere_vm["/${vm['datacenter']}/vm/${hostname}"],
         }
       }
     }
