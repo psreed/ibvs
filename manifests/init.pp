@@ -14,9 +14,18 @@ class ibvs (
   Hash  $vms,
   Hash  $puppet,
 ) {
-  contain ibvs::vsphere_conf
-  contain ibvs::manage_vms
+  #Setup stages for order of operations
+  stage { 'vsphere_config': }
+  stage { 'vm_creation_pre': }
+  stage { 'vm_creation': }
+  stage { 'vm_creation_post': }
+  Stage['vsphere_config']
+  -> Stage['main']
+  -> Stage['vm_creation_pre']
+  -> Stage['vm_creation']
+  -> Stage['vm_creation_post']
 
-  Class['ibvs::vsphere_conf']
-  -> Class['ibvs::manage_vms']
+  class { 'ibvs::vsphere_conf': stage => 'vsphere_config' }
+  class { 'ibvs::manage_vms': stage => 'vm_creation' }
+  class { 'ibvs::update_vm_networking': stage => 'vm_creation_post' }
 }

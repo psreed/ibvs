@@ -73,6 +73,7 @@ class ibvs::manage_vms {
         notify { "Creating VM (${hostname})": }
         vsphere_vm { "/${vm['datacenter']}/vm/${hostname}":
           ensure        => 'stopped',
+          stage         => 'vm_creation',
           cpus          => 2,
           memory        => 512,
           resource_pool => $vm['resource_pool'],
@@ -86,11 +87,6 @@ class ibvs::manage_vms {
                 'puppet'    => $ibvs::puppet,
             }),
           },
-        } -> class { 'ibvs::update_vm_network':
-          vm_name       => $hostname,
-          network_label => $vm['network_label'],
-          nic_id        => 0,
-          require       => Vsphere_vm["/${vm['datacenter']}/vm/${hostname}"],
         }
       }
     }

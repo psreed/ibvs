@@ -1,8 +1,8 @@
 ---
 lookup_options:
-  ibvs::infoblox.wapi_password:
+  ibvs::infoblox::wapi_password:
     convert_to: 'Sensitive'
-  ibvs::vsphere.password:
+  ibvs::vsphere::password:
     convert_to: 'Sensitive'   
 
 ibvs::infoblox:

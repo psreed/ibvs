@@ -30,6 +30,18 @@ puppet agent automatically.
 For Windows based VM templates, a similar job should be added to scheduled 
 tasks to run on boot.
 
+## Puppet Agent Requirements (v7.17.0 & preprocess_deferred=false)
+
+In order to support the use of the `preprocess_deferred=false` configuration option
+Puppet Agent v7.17.0 or above must be used.
+
+The Puppet agent used to run this module must have the `preprocess_deferred` set 
+to `false`. By default, this setting is `true` and will cause items to run out of 
+order and create unexpected results.
+
+This can be accomplished on the agent side by running the following command:
+ `sudo puppet config set --section=main preprocess_deferred false`
+
 ## Using with 'puppet apply ...'
 
 If using `puppet apply` for testing on a workstation, follow this process:
