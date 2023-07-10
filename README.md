@@ -21,8 +21,8 @@ See `data/common.yaml.example` for all settings and options.
 
 Linux based VM templates should have the following line added to their
 crontab in order to activate the integration fully. This will include 
-he setting of IP address information, hostname and installing the 
-puppet agent automatically.
+the setting of IP address information, hostname and installing the 
+puppet agent automatically from details provided through Hiera.
 ```
 @reboot vmtoolsd --cmd "info-get guestinfo.puppet.firstrun" | /bin/bash -s
 ```
@@ -40,7 +40,9 @@ to `false`. By default, this setting is `true` and will cause items to run out o
 order and create unexpected results.
 
 This can be accomplished on the agent side by running the following command:
- `sudo puppet config set --section=main preprocess_deferred false`
+ ```
+ sudo puppet config set --section=main preprocess_deferred false
+ ```
 
 ## Using with 'puppet apply ...'
 
@@ -48,19 +50,19 @@ If using `puppet apply` for testing on a workstation, follow this process:
 
 1. in a temporary working directory, create a `modules` directory and 
 install the `puppetlabs-vsphere` and `puppetlabs-stdlib` modules. Ensure to
-use the `--modulepath=./` option.
+use the `--modulepath=./modules` option.
 ```
 mkdir testing
 cd testing
 mkdir modules
-puppet module install puppet-stdlib --modulepath=./modules
-puppet module install puppet-vsphere --modulepath=./modules
+puppet module install puppetlabs-stdlib --modulepath=./modules
+puppet module install puppetlabs-vsphere --modulepath=./modules
 ```
-Note: Make sure to install the `hocon` and `rbvmomi` gems which are required
-for use with the `puppetlabs-vsphere` module:
+Note: Make sure to install the `hocon` and `rbvmomi2` gems which are required
+for use with the `puppetlabs-vsphere` module. Note, this should be done using sudo:
 ```
-/opt/puppetlabs/puppet/bin/gem install hocon --no-rdoc
-/opt/puppetlabs/puppet/bin/gem install rbvmomi --no-rdoc
+sudo /opt/puppetlabs/puppet/bin/gem install hocon
+sudo /opt/puppetlabs/puppet/bin/gem install rbvmomi2
 ```
 2. Clone this repository/module into the `modules` directory
 ```
@@ -72,7 +74,10 @@ to `ibvs/data/common.yaml`:
 ```
 cp ibvs/data/common.yaml.example ibvs/data/common.yaml
 ```
-4. Modify the `common.yaml` for your environment and desired setup
+4. Modify the `common.yaml` for your environment and desired setup. All entries which
+are encased in angled brackets `< >` must be set to your environment specifics.
+Note: Passwords and other strings with special characters should be enclosed in 
+single quotes:
 ```
 vi ibvs/data/common.yaml
 ```

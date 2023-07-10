@@ -10,6 +10,9 @@ ibvs::infoblox:
   wapi_version: v2.11
   user:       <INFOBLOX API USER>
   password:   <INFOBLOX API PASSWORD> # NOTE: Should be encrypted with eYaml in production
+  insecure: false
+  ssl: true
+
 
 ibvs::vsphere:
   host: <VMWARE VSPHERE HOST>
@@ -18,6 +21,9 @@ ibvs::vsphere:
   port: 443
   insecure: false
   ssl: true
+
+ibvs::puppet:
+  server: <PUPPET SERVER FQDN>
 
 ibvs::templates:
   RHEL87:
@@ -77,21 +83,17 @@ ibvs::templates:
         vmtoolsd --cmd "info-set guestinfo.puppet.firstruncomplete true"
       fi
 
-ibvs::puppet:
-  server: <PUPPET SERVER FQDN>
-
 ibvs::vms:
   test1.example.com:
     ensure: present
     datacenter: Datacenter1
     template: RHEL90
-    resource_pool: Cluster01
+    resource_pool: Cluster01 or /Cluster01/ResourcePool
     interface: ens192
     network: '10.0.0.0/24'
     network_label: 'VM Network'
     infoblox_network_view: Default
     infoblox_dns_view: Default
-    infoblox_zone_auth: 10.0.0.0/8
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1
@@ -102,13 +104,12 @@ ibvs::vms:
     ensure: present
     datacenter: Datacenter1
     template: RHEL90
-    resource_pool: Cluster01
+    resource_pool: Cluster01 or /Cluster01/ResourcePool
     interface: ens192
     network: '10.0.0.0/24'
     network_label: 'VM Network'
     infoblox_network_view: Default
     infoblox_dns_view: Default
-    infoblox_zone_auth: 10.0.0.0/8
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1

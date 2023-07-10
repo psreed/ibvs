@@ -9,7 +9,7 @@
 ## TODO: Implement --noop capability
 ## TODO: Add support for external vSphere credential retrieval (i.e. Vault, Azure Keystore, SSM, etc.)
 #
-Puppet::Functions.create_function(:'ibvs::vsphere::update_vm_network_labels') do
+Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_networking') do
   require 'cgi'
   require 'json'
   require 'uri'
@@ -20,7 +20,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::update_vm_network_labels') do
   dispatch :func do
     param 'Hash', :vsphere
     param 'Hash', :vms
-    return_type 'Boolean'
+    return_type 'String'
   end
 
   #################################################################################################
@@ -74,6 +74,8 @@ Puppet::Functions.create_function(:'ibvs::vsphere::update_vm_network_labels') do
       case options[:request_type].upcase
         when 'POST'
           request = Net::HTTP::Post.new(uri.request_uri)
+        when 'Put'
+          request = Net::HTTP::Patch.new(uri.request_uri)
         when 'PATCH'
           request = Net::HTTP::Patch.new(uri.request_uri)
         else #assume GET
@@ -102,7 +104,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::update_vm_network_labels') do
   # Main function
   #################################################################################################
   def func(vsphere, vms)
-    fn='ibvs::vsphere::update_vm_network_labels'
+    fn='ibvs::vsphere::defer::update_vm_networking'
     Puppet.debug("#{fn}: Function Started")
 
     ## Connect to vSphere and get Session ID
@@ -119,7 +121,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::update_vm_network_labels') do
     ## Loop through VMs and update vSphere VM network backings
     vms.each { |vmdef|
       vm_name = vmdef[0]
-      vm_details = vmdef[1]
+      vm_details = vmdef[1].clone
 
       ### Check if VM is set for 'ensure => present'
       next if vm_details['ensure'] != 'present' 
@@ -189,7 +191,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::update_vm_network_labels') do
     }
 
     ## Return gracefully
-    return true
+    return 'root' # designed to exit with name of root user (or any other system user that can execute /bin/false)
     
   end
 end
