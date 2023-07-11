@@ -138,9 +138,9 @@ class ibvs::manage_vms {
         # TODO: rewrite this as a direct API call to remove dependancy on pupeptlabs-vsphere module
         vsphere_vm { "/${vm_profile['datacenter']}/vm/${hostname}":
           ensure        => 'stopped',
-          #cpus          => 2,
-          #memory        => 512,
-          resource_pool => $vm['resource_pool'],
+          cpus          => $vm_profile['cpus'],
+          memory        => $vm_profile['memory'],
+          resource_pool => $vm_profile['resource_pool'],
           source        => $ibvs::templates[$vm_profile['template']]['path'],
         }
       }

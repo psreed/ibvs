@@ -87,6 +87,8 @@ ibvs::vm_profiles:
   default:
     datacenter: Datacenter1
     template: RHEL90
+    cpus: 2
+    memory: 4096    
     resource_pool: Cluster01 or /Cluster01/ResourcePool
     interface: ens192
     network: '10.0.0.0/24'
@@ -102,6 +104,8 @@ ibvs::vm_profiles:
   example_profile1:
     datacenter: Datacenter1
     template: RHEL90
+    cpus: 2
+    memory: 4096    
     resource_pool: Cluster01 or /Cluster01/ResourcePool
     interface: ens192
     network: '10.0.0.0/24'
