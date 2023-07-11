@@ -1,6 +1,6 @@
 {
   "name": "psreed-ibvs",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "Paul Reed",
   "summary": "Module to usr Infoblox and vSphere togeter to deploy VMs",
   "license": "Apache-2.0",

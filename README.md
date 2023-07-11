@@ -26,7 +26,7 @@ puppet agent automatically from details provided through Hiera.
 The following should be added to a new file named 
 `/etc/cron.d/puppet_first_run`:
 ```
-@reboot vmtoolsd --cmd "info-get guestinfo.puppet.firstrun" | /bin/bash -s
+@reboot root vmtoolsd --cmd "info-get guestinfo.puppet.firstrun" | /bin/bash -s
 ```
 NOTE: This file can be removed afterward once connected to the 
 network on it's new IP.
