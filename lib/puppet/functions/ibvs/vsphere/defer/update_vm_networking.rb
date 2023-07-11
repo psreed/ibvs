@@ -20,6 +20,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_networking')
   dispatch :func do
     param 'Hash', :vsphere
     param 'Hash', :vms
+    param 'Hash', :vm_profiles
     return_type 'String'
   end
 
@@ -103,7 +104,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_networking')
   #################################################################################################
   # Main function
   #################################################################################################
-  def func(vsphere, vms)
+  def func(vsphere, vms, vm_profiles)
     fn='ibvs::vsphere::defer::update_vm_networking'
     Puppet.debug("#{fn}: Function Started")
 
@@ -122,6 +123,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_networking')
     vms.each { |vmdef|
       vm_name = vmdef[0]
       vm_details = vmdef[1].clone
+      vm_profile = vm_profiles[vm_details['profile']]
 
       ### Check if VM is set for 'ensure => present'
       next if vm_details['ensure'] != 'present' 
@@ -134,8 +136,8 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_networking')
 
       ### Get Network by Label
       network = ""
-      network_list.each { |n| network = n if n['name'] == vm_details['network_label'] }
-      fail("#{fn}: Could not get vSphere Network from list. Does the network exist?\nvm_name=#{vm_name}\nnetwork_label=#{vm_details['network_label']}\nlist=#{networks_list}") if network == ""
+      network_list.each { |n| network = n if n['name'] == vm_profile['network_label'] }
+      fail("#{fn}: Could not get vSphere Network from list. Does the network exist?\nvm_name=#{vm_name}\nnetwork_label=#{vm_profile['network_label']}\nlist=#{networks_list}") if network == ""
       #Puppet.debug("#{fn}: NETWORK: #{network}")
 
       ### Get Hardware Ethernet details for VM

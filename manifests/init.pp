@@ -1,16 +1,18 @@
 #
 # @summary Infoblox IPAM integration for vShere Deployment
 #
-# @param infoblox   - Infoblox configuration hash, see common.yaml.example for structure
-# @param vsphere    - vSphere configuration hash, see common.yaml.example for structure
-# @param templates  - List of VM Templates and metadata, see common.yaml.example for structure
-# @param vms        - List of VMs to deplay/maintain/decommission, see common.yaml.example for structure
-# @param puppet     - Puppet agent configuration settings, see common.yaml.example for structure
+# @param infoblox    - Infoblox configuration hash, see common.yaml.example for structure
+# @param vsphere     - vSphere configuration hash, see common.yaml.example for structure
+# @param templates   - List of VM Templates and metadata, see common.yaml.example for structure
+# @param vms         - List of VMs to deplay/maintain/decommission, see common.yaml.example for structure
+# @param vm_profiles - List of profiles for VMs, see common.yaml.example for structure
+# @param puppet      - Puppet agent configuration settings, see common.yaml.example for structure
 #
 class ibvs (
   Hash  $infoblox,
   Hash  $vsphere,
   Hash  $templates,
+  Hash  $vm_profiles,
   Hash  $vms,
   Hash  $puppet,
 ) {

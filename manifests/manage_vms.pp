@@ -59,10 +59,12 @@ class ibvs::manage_vms {
       $destroy_condition=true
     }
 
+    $vm_profile= $ibvs::vm_profiles[$vm['profile']]
+
     ## Destroy VM and remove IP reservation
     if $destroy_condition and !$facts['clientnoop'] {
       # Get existing IP reservation (if it exists)
-      $existing_ip=ibvs::infoblox::check_for_reserved_ip_in_list($infoblox_reserved_ips, $hostname, $vm['infoblox_network_view'])
+      $existing_ip=ibvs::infoblox::check_for_reserved_ip_in_list($infoblox_reserved_ips, $hostname, $vm_profile['infoblox_network_view'])
       if $existing_ip != '' {
         # Get list of matching IP records in Infoblox
         $ips_to_remove=ibvs::infoblox::infoblox_api_call($ibvs::infoblox_settings, {
@@ -85,7 +87,7 @@ class ibvs::manage_vms {
       }
       # Destroy the VM
       # TODO: rewrite this as a direct API call to remove dependancy on pupeptlabs-vsphere module
-      vsphere_vm { "/${vm['datacenter']}/vm/${hostname}": ensure => absent, }
+      vsphere_vm { "/${vm_profile['datacenter']}/vm/${hostname}": ensure => absent, }
     }
     if $destroy_condition and $facts['clientnoop'] {
       notify { "Would have destroyed VM: '${hostname}' (noop)": }
@@ -96,13 +98,13 @@ class ibvs::manage_vms {
       # Get Infoblox Network _ref for which the VM is/will be a member
       $ib_network=ibvs::infoblox::infoblox_api_call($infoblox_settings, {
           'request_type' => 'GET',
-          'endpoint'     => "/network?network=${vm['network']}",
+          'endpoint'     => "/network?network=${vm_profile['network']}",
           'json_parse'   => true,
       })['result'][0]['_ref']
       #notify { "ib_network_view: '${ib_network'": }
 
       # Check if IP reservation already exists
-      $existing_ip=ibvs::infoblox::check_for_reserved_ip_in_list($infoblox_reserved_ips, $hostname, $vm['infoblox_network_view'])
+      $existing_ip=ibvs::infoblox::check_for_reserved_ip_in_list($infoblox_reserved_ips, $hostname, $vm_profile['infoblox_network_view'])
 
       if $existing_ip == '' {
         # Reserve Next IP   
@@ -110,9 +112,9 @@ class ibvs::manage_vms {
             'request_type' => 'POST',
             'endpoint'     => '/fixedaddress?_return_fields%2B=ipv4addr',
             'request_body' => "{
-              \"ipv4addr\": \"func:nextavailableip:${vm['network']},${vm['infoblox_network_view']}\",
+              \"ipv4addr\": \"func:nextavailableip:${vm_profile['network']},${vm_profile['infoblox_network_view']}\",
               \"mac\": \"00:00:00:00:00:00\",
-              \"network_view\": \"${vm['infoblox_network_view']}\",
+              \"network_view\": \"${vm_profile['infoblox_network_view']}\",
               \"name\": \"${hostname}\",
               \"comment\": \"Managed by Puppet\"
             }",
@@ -126,7 +128,7 @@ class ibvs::manage_vms {
 
       #preflight checks
       if $ibvs::templates[$vm['template']] == '' {
-        fail("Invalid template selected for host: ${hostname}, template: ${ibvs::templates[$vm['template']]}")
+        fail("Invalid template selected for host: ${hostname}, template: ${ibvs::templates[$vm_profile['template']]}")
       }
 
       if $ib_reserved_ip != '' {
@@ -134,12 +136,12 @@ class ibvs::manage_vms {
 
         # Create the VM
         # TODO: rewrite this as a direct API call to remove dependancy on pupeptlabs-vsphere module
-        vsphere_vm { "/${vm['datacenter']}/vm/${hostname}":
+        vsphere_vm { "/${vm_profile['datacenter']}/vm/${hostname}":
           ensure        => 'stopped',
           #cpus          => 2,
           #memory        => 512,
           resource_pool => $vm['resource_pool'],
-          source        => $ibvs::templates[$vm['template']]['path'],
+          source        => $ibvs::templates[$vm_profile['template']]['path'],
         }
       }
     }

@@ -9,7 +9,14 @@ class ibvs::update_vm_extraconfig {
       'json_parse'   => true,
   })['result']
 
-  $result = Deferred('ibvs::vsphere::defer::update_vm_extraconfig', [$ibvs::vsphere_settings, $ibvs::vms, $ibvs::templates, $reserved_ips])
+  $result = Deferred('ibvs::vsphere::defer::update_vm_extraconfig',
+    [
+      $ibvs::vsphere_settings,
+      $ibvs::vms,
+      $ibvs::vm_profiles,
+      $ibvs::templates,
+      $reserved_ips,
+  ])
   # NOTE: The next line is required to make sure the deferred function above runs, but will always fail its 'onlyif' check.
   # The user=>$result forces the Deferred function to run, and expects the output of a user that can run '/bin/false'
   exec { 'ibvs::vsphere::defer::update_vm_extraconfig': command => '/bin/true', onlyif => '/bin/false', user => $result }

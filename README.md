@@ -23,9 +23,13 @@ Linux based VM templates should have the following line added to their
 crontab in order to activate the integration fully. This will include 
 the setting of IP address information, hostname and installing the 
 puppet agent automatically from details provided through Hiera.
+The following should be added to a new file named 
+`/etc/cron.d/puppet_first_run`:
 ```
 @reboot vmtoolsd --cmd "info-get guestinfo.puppet.firstrun" | /bin/bash -s
 ```
+NOTE: This file can be removed afterward once connected to the 
+network on it's new IP.
 
 For Windows based VM templates, a similar job should be added to scheduled 
 tasks to run on boot.

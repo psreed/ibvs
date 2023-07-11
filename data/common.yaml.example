@@ -83,48 +83,48 @@ ibvs::templates:
         vmtoolsd --cmd "info-set guestinfo.puppet.firstruncomplete true"
       fi
 
+ibvs::vm_profiles:
+  default:
+    datacenter: Datacenter1
+    template: RHEL90
+    resource_pool: Cluster01 or /Cluster01/ResourcePool
+    interface: ens192
+    network: '10.0.0.0/24'
+    network_label: 'VM Network'
+    infoblox_network_view: Default
+    infoblox_dns_view: Default
+    gateway: 10.0.0.254
+    dns: 
+      - 10.0.0.1
+      - 10.0.0.2
+    puppet_psk: PSK_UNSET
+    puppet_role: role::generic
+  example_profile1:
+    datacenter: Datacenter1
+    template: RHEL90
+    resource_pool: Cluster01 or /Cluster01/ResourcePool
+    interface: ens192
+    network: '10.0.0.0/24'
+    network_label: 'VM Network'
+    infoblox_network_view: Default
+    infoblox_dns_view: Default
+    gateway: 10.0.0.254
+    dns: 
+      - 10.0.0.1
+      - 10.0.0.2
+    puppet_psk: PSK_UNSET
+    puppet_role: role::generic
+
 ibvs::vms:
   test1.example.com:
     ensure: present
-    datacenter: Datacenter1
-    template: RHEL90
-    resource_pool: Cluster01 or /Cluster01/ResourcePool
-    interface: ens192
-    network: '10.0.0.0/24'
-    network_label: 'VM Network'
-    infoblox_network_view: Default
-    infoblox_dns_view: Default
-    gateway: 10.0.0.254
-    dns: 
-      - 10.0.0.1
-      - 10.0.0.2
-    puppet_psk: PSK_UNSET
-    puppet_role: role::generic
+    profile: default
   test2.example.com:
     ensure: present
-    datacenter: Datacenter1
-    template: RHEL90
-    resource_pool: Cluster01 or /Cluster01/ResourcePool
-    interface: ens192
-    network: '10.0.0.0/24'
-    network_label: 'VM Network'
-    infoblox_network_view: Default
-    infoblox_dns_view: Default
-    gateway: 10.0.0.254
-    dns: 
-      - 10.0.0.1
-      - 10.0.0.2
-    puppet_psk: PSK_UNSET
-    puppet_role: role::generic
+    profile: example_profile1 
   test3.example.com:
     ensure: absent
-    datacenter: Datacenter1
+    profile: example_profile1
   test4.example.com:
     ensure: absent
-    datacenter: Datacenter1
-  test5.example.com:
-    ensure: absent
-    datacenter: Datacenter1
-  test6.example.com:
-    ensure: absent
-    datacenter: Datacenter1
+    profile: default
