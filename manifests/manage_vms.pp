@@ -139,7 +139,7 @@ class ibvs::manage_vms {
           #cpus          => 2,
           #memory        => 512,
           resource_pool => $vm['resource_pool'],
-          source        => "/${vm['datacenter']}/vm/${ibvs::templates[$vm['template']]['path']}",
+          source        => $ibvs::templates[$vm['template']]['path'],
         }
       }
     }
