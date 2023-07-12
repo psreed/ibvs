@@ -21,6 +21,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_networking')
     param 'Hash', :vsphere
     param 'Hash', :vms
     param 'Hash', :vm_profiles
+    param 'Boolean', :noop
     return_type 'String'
   end
 
@@ -104,9 +105,12 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_networking')
   #################################################################################################
   # Main function
   #################################################################################################
-  def func(vsphere, vms, vm_profiles)
+  def func(vsphere, vms, vm_profiles, noop)
     fn='ibvs::vsphere::defer::update_vm_networking'
     Puppet.debug("#{fn}: Function Started")
+
+    Puppet.debug('ibvs::vsphere::defer::update_vm_extraconfig: NOOP MODE DETECTED') if noop
+    return 'root' if noop
 
     ## Connect to vSphere and get Session ID
     vsphere['session_id']=vsphere_session_start(vsphere)  

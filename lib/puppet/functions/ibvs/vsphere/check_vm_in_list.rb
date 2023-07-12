@@ -8,7 +8,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::check_vm_in_list') do
     
     def func(vm_list, vm_name)
       fn='ibvs::vsphere::check_vm_in_list'
-      Puppet.debug("#{fn}: Function Started")
+      #Puppet.debug("#{fn}: Function Started")
 
       vm_list.each { |v| return true if v['name'] == vm_name }
 

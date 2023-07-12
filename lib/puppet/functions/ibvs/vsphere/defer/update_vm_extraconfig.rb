@@ -10,12 +10,17 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_extraconfig'
     param 'Hash', :vm_profiles
     param 'Hash', :vm_templates
     param 'Tuple', :reserved_ips
+    param 'Tuple', :dns_records
+    param 'Boolean', :noop
     return_type 'String'
   end
 
-  def func(vsphere_settings, vms, vm_profiles, vm_templates, reserved_ips)
+  def func(vsphere_settings, vms, vm_profiles, vm_templates, reserved_ips, dns_records, noop)
     Puppet.debug('ibvs::vsphere::defer::update_vm_extraconfig: Function Started')
-  
+
+    Puppet.debug('ibvs::vsphere::defer::update_vm_extraconfig: NOOP MODE DETECTED') if noop
+    return 'root' if noop
+
     vim = RbVmomi::VIM.connect(
       host: vsphere_settings['host'],
       user: vsphere_settings['user'],
@@ -41,11 +46,19 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_extraconfig'
       #Puppet.debug("#{vm['name']}: #{vm.keys}")   
 
       # Find reserved IP for vm['name']
-      reserved_ip=nil
-      reserved_ips.each { |rip| begin reserved_ip = rip['ipv4addr']; break; end if rip['name'] == vm['name'] }
-      next if !reserved_ip # Skip this VM if we don't have an address in the reserved list    
-      #Puppet.debug("Reserved IP: #{reserved_ip}")
-
+      if vm_profile['infoblox_manage_by_dns'] 
+        reserved_ip=nil
+        dns_records.each { |rip| 
+          #Puppet.debug("Testing: '#{rip}' vs '#{vm}'")
+          begin reserved_ip = rip['ipv4addrs'][0]['ipv4addr']; break; end if rip['name'] == vm['name'] 
+        }
+        next if !reserved_ip # Skip this VM if we don't have an address in the reserved list    
+      else
+        reserved_ip=nil
+        reserved_ips.each { |rip| begin reserved_ip = rip['ipv4addr']; break; end if rip['name'] == vm['name'] }
+        next if !reserved_ip # Skip this VM if we don't have an address in the reserved list    
+      end
+      Puppet.debug("Reserved IP: #{reserved_ip}")
       # Get extraconfig
       vmobj.config.extraConfig.each { |x| next if x.key == 'guestinfo.puppet.firstrun' || x.key == 'guestinfo.puppet.firstruncomplete' } # [Condition 3]
       #Puppet.debug("VM Does not have guestinfo key set")

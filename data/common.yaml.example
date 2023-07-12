@@ -95,6 +95,7 @@ ibvs::vm_profiles:
     network_label: 'VM Network'
     infoblox_network_view: Default
     infoblox_dns_view: Default
+    infoblox_manage_by_dns: true
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1
@@ -112,6 +113,7 @@ ibvs::vm_profiles:
     network_label: 'VM Network'
     infoblox_network_view: Default
     infoblox_dns_view: Default
+    infoblox_manage_by_dns: true
     gateway: 10.0.0.254
     dns: 
       - 10.0.0.1

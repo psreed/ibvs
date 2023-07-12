@@ -99,6 +99,48 @@ managed by ibvs::vsphere_config. With this method, environment variable are
 not required, however there is a file on disk with password to be managed 
 appropriately.
 
+## Using with Environment Variables (pipline integration)
+
+For use within a pipeline, this module can use environment variables instead of a VM list
+from Hiera (common.yaml). There are 2 use cases supported, create and destroy.
+
+VM profiles will still be used from Hiera (common.yaml). Examples are provided below.
+Note: VMs are seperated in the list using commas.
+
+Case 1: Create VMs from List
+```
+ export IBVS_vms=testvm1.example.com,testvm2.example.com
+ export IBVS_vm_profile=default
+ export IBVS_action=create
+```
+
+Case 2: Create VMs from List
+```
+export IBVS_vms=testvm3.example.com,testvm4.example.com
+export IBVS_vm_profile=default
+export IBVS_action=destroy
+export IBVS_accept_irreversible_action=true
+```
+
+Once the environment variables are set, run puppet with the override settings from the
+command line or a script as shown in the following (substituting for the correct paths): 
+```
+#!/bin/sh
+
+sudo /opt/puppetlabs/puppet/bin/puppet apply \
+  --modulepath=./modules \
+  --hiera_config ./modules/ibvs/hiera.yaml \
+  -e "
+    class { 'ibvs':
+      env_vms => '${IBVS_vms}',
+      env_vm_profile => '${IBVS_vm_profile}',
+      env_action => '${IBVS_action}',
+      env_accept_irreversible_action => '${IBVS_accept_irreversible_action}',
+    }
+  " --debug --trace "$@"
+  ```
+ 
+
 ## Usage with Puppet Enterprise (puppet agent mode)
 
 For usage with puppet enterprise, select a node to run `ibvs` on, create a 
