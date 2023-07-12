@@ -69,7 +69,7 @@ ibvs::templates:
         # Network IP Settings
         nmcli connection modify <%= $vm['interface'] %> IPv4.address <%= $ipaddress %>
         nmcli connection modify <%= $vm['interface'] %> IPv4.gateway <%= $vm['gateway'] %>
-        nmcli connection modify <%= $vm['interface'] %> IPv4.dns "<%= join($vm['dns'], ' ') %>"
+        nmcli connection modify <%= $vm['interface'] %> IPv4.dns "<%= $vm['dns'] %>"
         nmcli connection modify <%= $vm['interface'] %> IPv4.method manual
         nmcli connection down <%= $vm['interface'] %> && nmcli connection up <%= $vm['interface'] %>
 
