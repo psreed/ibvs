@@ -68,7 +68,7 @@ Puppet::Functions.create_function(:'ibvs::vsphere::defer::update_vm_extraconfig'
       template.gsub! "<%= $vm['interface'] %>", vm_profile['interface']
       template.gsub! '<%= $ipaddress %>', "#{reserved_ip}/#{vm_profile['network'].split(/\//)[1]}"
       template.gsub! "<%= $vm['gateway'] %>", vm_profile['gateway']
-      template.gsub! "<%= join($vm['dns'], ' ') %>", vm_profile['dns'].join(' ')
+      template.gsub! "<%= $vm['dns'] %>", vm_profile['dns'].join(' ')
       template.gsub! "<%= $puppet['server'] %>", vsphere_settings['puppet']
       template.gsub! "<%= $vm['puppet_psk'] %>", vm_profile['puppet_psk']
       template.gsub! "<%= $vm['puppet_role'] %>", vm_profile['puppet_role']
